@@ -1,0 +1,25 @@
+# .gitignore
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook files
+.ipynb_checkpoints
+
+# Virtual environments
+venv/
+*.venv
+.env/
+
+# Log files
+*.log
+
+# Environment variables file
+.env
+
+# Models
+deepspeech-model.pbmm
+deepspeech-scorer.scorer

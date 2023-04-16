@@ -1,0 +1,6 @@
+deepspeech
+numpy
+pyaudio
+pyttsx3
+requests
+python-dotenv
