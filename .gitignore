@@ -23,3 +23,5 @@ venv/
 # Models
 deepspeech-model.pbmm
 deepspeech-scorer.scorer
+
+run.bat
