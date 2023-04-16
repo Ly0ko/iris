@@ -49,7 +49,24 @@ def list_input_devices():
                   audio.get_device_info_by_host_api_device_index(0, i).get('name'))
 
 
+def count_tokens(text):
+    return len(text.split())
+
+
 def get_gpt3_response(messages):
+    current_token_count = sum(count_tokens(
+        message["content"]) for message in messages)
+
+    if current_token_count >= 4000:
+        print("Token limit reached. Popping the second message.")
+        messages.pop(1)
+        current_token_count = sum(count_tokens(
+            message["content"]) for message in messages)
+
+    if current_token_count >= 4000:
+        raise ValueError(
+            "Token count still too high after removing the second message.")
+
     data = {
         "model": "gpt-3.5-turbo",
         "messages": messages,

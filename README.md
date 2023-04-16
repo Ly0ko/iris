@@ -1,4 +1,5 @@
 # IrisAI
+Just experimenting with ChatGPT as a voice assistant.
 
 ## Prerequisites
 
@@ -32,14 +33,7 @@ source venv/bin/activate
 
 ```
 python -m venv venv
-venv\Scripts\activate.bat
-```
-
-### For Windows (PowerShell):
-
-```
-python -m venv venv
-venv\Scripts\Activate.ps1
+.\venv\Scripts\activate
 ```
 
 3. Install the required packages:
@@ -64,4 +58,4 @@ The voice assistant will start listening for your voice commands. To exit, press
 
 ## Troubleshooting
 
-If you encounter issues with the microphone device index, you can list available input devices using the list_input_devices() function in the script. Update the input_device_index parameter in the audio.open() function accordingly.
+If you encounter issues with the microphone device index, you can list available input devices using the `list_input_devices()` function in the script. Update the `input_device_index` parameter in the `audio.open()` function accordingly.
