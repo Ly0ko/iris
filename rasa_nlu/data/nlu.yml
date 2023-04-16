@@ -1,0 +1,9 @@
+version: "3.1"
+
+nlu:
+  - intent: open_project_folder
+    examples: |
+      - open the project folder
+      - show me the project directory
+      - open the project directory
+      - show me the folder of this project
