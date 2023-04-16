@@ -1,11 +1,11 @@
 import os
-from dotenv import load_dotenv
-import deepspeech
 import numpy as np
 import pyaudio
 import requests
 import audioop
 import pyttsx3
+from dotenv import load_dotenv
+import deepspeech
 
 load_dotenv()
 
@@ -16,7 +16,6 @@ if not api_key:
 
 headers = {"Authorization": f"Bearer {api_key}"}
 
-# Load the DeepSpeech model
 model_path = os.path.join(os.getcwd(), 'deepspeech-model.pbmm')
 scorer_path = os.path.join(os.getcwd(), 'deepspeech-scorer.scorer')
 model = deepspeech.Model(model_path)
@@ -25,21 +24,16 @@ model.enableExternalScorer(scorer_path)
 with open("system_prompt.txt", "r") as file:
     system_prompt = file.read()
 
-
 messages = [{"role": "system", "content": system_prompt}]
 
-
-# Set up audio recording
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 CHUNK = 1024
 
-# Initialize the PyAudio library
 audio = pyaudio.PyAudio()
 
 
-# Use this to find out the input device ID of the microphone you want to use
 def list_input_devices():
     info = audio.get_host_api_info_by_index(0)
     num_devices = info.get('deviceCount')
@@ -92,9 +86,8 @@ def record_audio():
 
     while True:
         data = stream.read(CHUNK, exception_on_overflow=False)
-        rms = audioop.rms(data, 2)  # Compute RMS of the audio data
-
-        is_speech = rms > 100  # Set a threshold to determine if speech is detected
+        rms = audioop.rms(data, 2)
+        is_speech = rms > 100
 
         if is_speech:
             frames.append(data)
@@ -107,32 +100,36 @@ def record_audio():
     return b"".join(frames)
 
 
-def speak(text):
-    engine = pyttsx3.init()
-    # Set the speech rate; you can change this for faster or slower speech
+def speak(text, engine):
     engine.setProperty('rate', 200)
-    # Set the voice; you can change the index for a different voice
     engine.setProperty('voice', engine.getProperty('voices')[1].id)
     engine.say(text)
     engine.runAndWait()
 
 
-# Main loop
-while True:
-    try:
-        audio_data = record_audio()
-        audio_data_np = np.frombuffer(audio_data, dtype=np.int16)
-        text = model.stt(audio_data_np)
+def main():
+    engine = pyttsx3.init()
 
-        if text.strip():
-            messages.append({"role": "user", "content": text})
-            gpt3_response = get_gpt3_response(messages)
-            messages.append({"role": "assistant", "content": gpt3_response})
+    while True:
+        try:
+            audio_data = record_audio()
+            audio_data_np = np.frombuffer(audio_data, dtype=np.int16)
+            text = model.stt(audio_data_np)
 
-            print(f"You: {text}")
-            print(f"Iris: {gpt3_response}")
-            speak(gpt3_response)
+            if text.strip():
+                messages.append({"role": "user", "content": text})
+                gpt3_response = get_gpt3_response(messages)
+                messages.append(
+                    {"role": "assistant", "content": gpt3_response})
 
-    except KeyboardInterrupt:
-        print("Exiting...")
-        break
+                print(f"You: {text}")
+                print(f"Iris: {gpt3_response}")
+                speak(gpt3_response, engine)
+
+        except KeyboardInterrupt:
+            print("Exiting...")
+            break
+
+
+if __name__ == "__main__":
+    main()
